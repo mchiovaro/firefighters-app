@@ -4,8 +4,6 @@ package com.example.firefighters;
 
 // presets
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
 import android.os.Bundle;
 
 // imports for sensor data
@@ -13,20 +11,15 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.view.View;
-import android.widget.Button;
-import android.content.Intent;
 import android.widget.TextView;
 import android.util.Log; // for logcat
 
-// start main activity                              // addition from tutorial - see overrides for
-                                                    // onAccuracyChanged and onSensorChanged
-public class MainActivity extends AppCompatActivity { //implements SensorEventListener {
-    private Button launch_button;
+// start launch activity                              // addition from tutorial - see overrides for
+// onAccuracyChanged and onSensorChanged
+public class LaunchRecordingActivity extends AppCompatActivity implements SensorEventListener {
 
-    /*
     // create Tag for Logcat
-    public static final String TAG = "MainActivity";
+    public static final String TAG = "LaunchRecordingActivity";
 
     // make variables for accel. sensor
     private TextView xTextAccel, yTextAccel, zTextAccel;
@@ -34,7 +27,7 @@ public class MainActivity extends AppCompatActivity { //implements SensorEventLi
     private SensorManager SMAccel;
 
     // make variables for gyro. sensor
-     private TextView xTextGyro, yTextGyro, zTextGyro;
+    private TextView xTextGyro, yTextGyro, zTextGyro;
     private Sensor gyroSensor;
     private SensorManager SMGyro;
 
@@ -42,30 +35,17 @@ public class MainActivity extends AppCompatActivity { //implements SensorEventLi
     private TextView xTextMag, yTextMag, zTextMag;
     private Sensor magSensor;
     private SensorManager SMMag;
-*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // presets on new project
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // initialize the launch button
-        launch_button = (Button) findViewById(R.id.launch_button);
-
-        // set button listener
-        launch_button.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                openLaunchRecordingActivity();
-            }
-        });
+        setContentView(R.layout.launch_activity);
 
         /* *
         Accelerometer set up
         * */
 
-/*
         // create sensor manager
         SMAccel = (SensorManager)getSystemService(SENSOR_SERVICE);
 
@@ -82,11 +62,11 @@ public class MainActivity extends AppCompatActivity { //implements SensorEventLi
         xTextAccel = (TextView)findViewById(R.id.xTextAccel);
         yTextAccel = (TextView)findViewById(R.id.yTextAccel);
         zTextAccel = (TextView)findViewById(R.id.zTextAccel);
-*/
+
         /* *
         Gyroscope set up
         * */
-/*
+
         // create sensor manager
         SMGyro = (SensorManager) getSystemService(SENSOR_SERVICE);
 
@@ -103,11 +83,11 @@ public class MainActivity extends AppCompatActivity { //implements SensorEventLi
         xTextGyro = (TextView)findViewById(R.id.xTextGyro);
         yTextGyro = (TextView)findViewById(R.id.yTextGyro);
         zTextGyro = (TextView)findViewById(R.id.zTextGyro);
-*/
+
         /* *
         Magnetometer set up
         * */
-/*
+
         // create sensor manager
         SMMag = (SensorManager)getSystemService(SENSOR_SERVICE);
 
@@ -127,7 +107,7 @@ public class MainActivity extends AppCompatActivity { //implements SensorEventLi
 
     }
 
-    // onAccuracyChanged and on SensorChanged are from the implements in the start of MainActivity
+    // onAccuracyChanged and on SensorChanged are from the implements in the start of LaunchRecordingActivity
 
     //not in use
     @Override
@@ -155,15 +135,7 @@ public class MainActivity extends AppCompatActivity { //implements SensorEventLi
 
         // save values for each time a sensor changes
         Log.d(TAG, "onSensorChanged: X: " + event.values[0] + " Y: " + event.values[1] + " Z: " + event.values[2]);
-*/
-    }
-    // create the function to launch the other activity
-    public void openLaunchRecordingActivity(){
-        // create the intent to launch the class
-        Intent intent = new Intent(this, LaunchRecordingActivity.class);
-        // launch the other activity using the intent
-        startActivity(intent);
-    }
 
+    }
 
 }
