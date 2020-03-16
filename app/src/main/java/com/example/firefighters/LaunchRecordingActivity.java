@@ -1,5 +1,3 @@
-// main point of entry for app
-// build and run will launch an instance and load layout
 package com.example.firefighters;
 
 // presets
@@ -14,8 +12,8 @@ import android.hardware.SensorEventListener;
 import android.widget.TextView;
 import android.util.Log; // for logcat
 
-// start launch activity                              // addition from tutorial - see overrides for
-// onAccuracyChanged and onSensorChanged
+// start launch activity                                       // addition from tutorial - see overrides for
+                                                               // onAccuracyChanged and onSensorChanged
 public class LaunchRecordingActivity extends AppCompatActivity implements SensorEventListener {
 
     // create Tag for Logcat
