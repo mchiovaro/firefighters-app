@@ -2,6 +2,9 @@ package com.example.firefighters;
 
 // presets
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 
 // imports for sensor data
@@ -11,6 +14,12 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.widget.TextView;
 import android.util.Log; // for logcat
+import android.widget.Toast;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 // start launch activity                                       // addition from tutorial - see overrides for
                                                                // onAccuracyChanged and onSensorChanged
@@ -40,6 +49,14 @@ public class LaunchRecordingActivity extends AppCompatActivity implements Sensor
         super.onCreate(savedInstanceState);
         setContentView(R.layout.launch_activity);
 
+        // get the file name from input screen to log movement data to file
+        Intent intent = getIntent();
+        String filename = intent.getStringExtra("FILENAME");
+
+        // show file name on movement data screen so we know it's okay
+        TextView file = findViewById(R.id.file);
+        file.setText(filename);
+
         /* *
         Accelerometer set up
         * */
@@ -51,15 +68,15 @@ public class LaunchRecordingActivity extends AppCompatActivity implements Sensor
         accelSensor = SMAccel.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         // register sensor listener // using NORMAL delay here (default), there is also an option FASTEST
-        SMAccel.registerListener((SensorEventListener) this, accelSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        SMAccel.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
         // tell logcat that sensor has been registered
         Log.d(TAG, "onCreate: Registered accelerometer");
 
         // Assign TextViews for accelerometer
-        xTextAccel = (TextView)findViewById(R.id.xTextAccel);
-        yTextAccel = (TextView)findViewById(R.id.yTextAccel);
-        zTextAccel = (TextView)findViewById(R.id.zTextAccel);
+        xTextAccel = findViewById(R.id.xTextAccel);
+        yTextAccel = findViewById(R.id.yTextAccel);
+        zTextAccel = findViewById(R.id.zTextAccel);
 
         /* *
         Gyroscope set up
@@ -72,15 +89,15 @@ public class LaunchRecordingActivity extends AppCompatActivity implements Sensor
         gyroSensor = SMGyro.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 
         // register sensor listener // using NORMAL delay here (default), there is also an option FASTEST
-        SMGyro.registerListener((SensorEventListener) this, gyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        SMGyro.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
         // tell logcat that sensor has been registered
         Log.d(TAG, "onCreate: Registered gyroscope");
 
         // Assign TextViews for accelerometer
-        xTextGyro = (TextView)findViewById(R.id.xTextGyro);
-        yTextGyro = (TextView)findViewById(R.id.yTextGyro);
-        zTextGyro = (TextView)findViewById(R.id.zTextGyro);
+        xTextGyro = findViewById(R.id.xTextGyro);
+        yTextGyro = findViewById(R.id.yTextGyro);
+        zTextGyro = findViewById(R.id.zTextGyro);
 
         /* *
         Magnetometer set up
@@ -93,15 +110,15 @@ public class LaunchRecordingActivity extends AppCompatActivity implements Sensor
         magSensor = SMMag.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
         // register sensor listener // using NORMAL delay here (default), there is also an option FASTEST
-        SMMag.registerListener((SensorEventListener) this, magSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        SMMag.registerListener(this, magSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
         // tell logcat that sensor has been registered
         Log.d(TAG, "onCreate: Registered magnetometer");
 
         // Assign TextViews for magnetometer
-        xTextMag = (TextView)findViewById(R.id.xTextMag);
-        yTextMag = (TextView)findViewById(R.id.yTextMag);
-        zTextMag = (TextView)findViewById(R.id.zTextMag);
+        xTextMag = findViewById(R.id.xTextMag);
+        yTextMag = findViewById(R.id.yTextMag);
+        zTextMag = findViewById(R.id.zTextMag);
 
     }
 
@@ -135,5 +152,8 @@ public class LaunchRecordingActivity extends AppCompatActivity implements Sensor
         Log.d(TAG, "onSensorChanged: X: " + event.values[0] + " Y: " + event.values[1] + " Z: " + event.values[2]);
 
     }
+
+    // create a data output stream function here
+
 
 }

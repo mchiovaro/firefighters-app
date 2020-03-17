@@ -17,7 +17,6 @@
         android:layout_marginEnd="78dp"
         android:layout_marginRight="78dp"
         android:ems="10"
-        android:inputType="textPersonName"
         android:text="Firefighter Experiment Input Screen"
         android:textColor="#F30A0A"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -28,18 +27,46 @@
         app:layout_constraintVertical_bias="0.066" />
 
     <Button
-        android:id="@+id/launch_button"
+        android:id="@+id/button_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="125dp"
         android:layout_marginLeft="125dp"
         android:layout_marginEnd="126dp"
         android:layout_marginRight="126dp"
-        android:text="Start Experiment"
+        android:onClick="start"
+        android:text="start"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.666"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.857" />
+        app:layout_constraintVertical_bias="0.751" />
+
+    <EditText
+        android:id="@+id/initials"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="RA initials"
+        android:inputType="text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.295" />
+
+    <EditText
+        android:id="@+id/partnum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Participant Number"
+        android:inputType="numberSigned"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.469" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
