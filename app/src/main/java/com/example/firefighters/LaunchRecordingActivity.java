@@ -16,13 +16,13 @@ import android.widget.TextView;
 import android.util.Log; // for logcat
 import android.widget.Toast;
 
-import java.io.FileInputStream;
+// misc imports for saving data
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
 
-// start launch activity                                       // addition from tutorial - see overrides for
-                                                               // onAccuracyChanged and onSensorChanged
+// start launch activity
 public class LaunchRecordingActivity extends AppCompatActivity implements SensorEventListener {
 
     // create Tag for Logcat
@@ -30,21 +30,21 @@ public class LaunchRecordingActivity extends AppCompatActivity implements Sensor
 
     // make variables for accel. sensor
     private TextView xTextAccel, yTextAccel, zTextAccel;
-    private Sensor accelSensor;
-    private SensorManager SMAccel;
 
     // make variables for gyro. sensor
     private TextView xTextGyro, yTextGyro, zTextGyro;
-    private Sensor gyroSensor;
-    private SensorManager SMGyro;
 
     // make variables for magnet. sensor
     private TextView xTextMag, yTextMag, zTextMag;
-    private Sensor magSensor;
-    private SensorManager SMMag;
+
+    // make storage variables for saving values
+    public float xAccel, yAccel, zAccel;
+    public float xGyro, yGyro, zGyro;
+    public float xMag, yMag, zMag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         // presets on new project
         super.onCreate(savedInstanceState);
         setContentView(R.layout.launch_activity);
@@ -53,7 +53,33 @@ public class LaunchRecordingActivity extends AppCompatActivity implements Sensor
         Intent intent = getIntent();
         String filename = intent.getStringExtra("FILENAME");
 
-        // show file name on movement data screen so we know it's okay
+        // initialize output stream
+        FileOutputStream fos = null;
+
+        // try creating and writing to a file
+        try {
+            // create file output stream to participant file
+            fos = openFileOutput(filename, MODE_PRIVATE);
+
+            // tell us that it saved and to where
+            Toast.makeText(this, "Created participant file: " + getFilesDir() + "/" + filename, Toast.LENGTH_LONG).show();
+
+          // catch if if can't find the variables or files
+        } catch (FileNotFoundException e){
+            e.printStackTrace();
+            Toast.makeText(this, "Could not save.", Toast.LENGTH_LONG).show();
+        } finally {
+            // if the fos is still open, close it
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        // show file name on movement data screen so we know it was entered correctly
         TextView file = findViewById(R.id.file);
         file.setText(filename);
 
@@ -62,10 +88,10 @@ public class LaunchRecordingActivity extends AppCompatActivity implements Sensor
         * */
 
         // create sensor manager
-        SMAccel = (SensorManager)getSystemService(SENSOR_SERVICE);
+        SensorManager SMAccel = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         // create accel. sensor
-        accelSensor = SMAccel.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        Sensor accelSensor = SMAccel.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         // register sensor listener // using NORMAL delay here (default), there is also an option FASTEST
         SMAccel.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_NORMAL);
@@ -83,10 +109,10 @@ public class LaunchRecordingActivity extends AppCompatActivity implements Sensor
         * */
 
         // create sensor manager
-        SMGyro = (SensorManager) getSystemService(SENSOR_SERVICE);
+        SensorManager SMGyro = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         // create gyro sensor
-        gyroSensor = SMGyro.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        Sensor gyroSensor = SMGyro.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 
         // register sensor listener // using NORMAL delay here (default), there is also an option FASTEST
         SMGyro.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
@@ -104,10 +130,10 @@ public class LaunchRecordingActivity extends AppCompatActivity implements Sensor
         * */
 
         // create sensor manager
-        SMMag = (SensorManager)getSystemService(SENSOR_SERVICE);
+        SensorManager SMMag = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         // create magnet. sensor
-        magSensor = SMMag.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        Sensor magSensor = SMMag.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
         // register sensor listener // using NORMAL delay here (default), there is also an option FASTEST
         SMMag.registerListener(this, magSensor, SensorManager.SENSOR_DELAY_NORMAL);
@@ -130,6 +156,7 @@ public class LaunchRecordingActivity extends AppCompatActivity implements Sensor
     }
 
     // update the accelerometer values when sensor changes
+    @SuppressLint("SetTextI18n")
     @Override
     public void onSensorChanged(SensorEvent event){
 
@@ -137,23 +164,64 @@ public class LaunchRecordingActivity extends AppCompatActivity implements Sensor
         xTextAccel.setText("X: " + event.values[0]);
         yTextAccel.setText("Y: " + event.values[1]);
         zTextAccel.setText("Z: " + event.values[2]);
+        // save to variables for easier writing
+        xAccel = event.values[0];
+        yAccel = event.values[1];
+        zAccel = event.values[2];
 
         // gyroscope values display
         xTextGyro.setText("X: " + event.values[0]);
         yTextGyro.setText("Y: " + event.values[1]);
         zTextGyro.setText("Z: " + event.values[2]);
+        // save to variables for easier writing
+        xGyro = event.values[0];
+        yGyro = event.values[1];
+        zGyro = event.values[2];
 
         // magnetometer values display
         xTextMag.setText("X: " + event.values[0]);
         yTextMag.setText("Y: " + event.values[1]);
         zTextMag.setText("Z: " + event.values[2]);
+        // save to variables for easier writing
+        xMag = event.values[0];
+        yMag = event.values[1];
+        zMag = event.values[2];
 
         // save values for each time a sensor changes
-        Log.d(TAG, "onSensorChanged: X: " + event.values[0] + " Y: " + event.values[1] + " Z: " + event.values[2]);
+        // Timestamp: offset from the Epoch, January 1, 1970 00:00:00.000 GMT (Gregorian)
+        long currentTime = Calendar.getInstance().getTimeInMillis();
+
+        // call append function for each sensor
+        try {
+            appendToFile(currentTime + "," + xAccel + "," + yAccel + "," + zAccel + "," + xGyro + "," + yGyro + "," + zGyro + "," + xMag + "," + yMag + "," + zMag);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
     // create a data output stream function here
+    private void appendToFile(String str) throws IOException {
+
+        // get the filename from the first activity
+        Intent intent = getIntent();
+        String filename = intent.getStringExtra("FILENAME");
+
+        // create the writer
+        FileOutputStream writer = openFileOutput(filename, MODE_APPEND);
+
+        // write the data string
+        writer.write(str.getBytes());
+
+        // line breaks between onSensorChanged calls
+        writer.write('\n');
+
+        // flush the data out to file
+        writer.flush();
+
+        // close writer
+        writer.close();
+    }
 
 
 }
